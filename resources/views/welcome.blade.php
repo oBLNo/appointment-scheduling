@@ -21,19 +21,18 @@
 </head>
 <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex items-center justify-center min-h-screen">
 @if (Route::has('login'))
-    <nav>
+    <main class="border-white">
         @auth
             <a
                 href="{{ url('/dashboard') }}"
                 class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
             >
-                Dashboard
+                Welcome {{Auth::user()->name}}
             </a>
         @else
             <a
                 href="{{ route('login') }}"
-                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
-            >
+                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
                 Log in
             </a>
 
@@ -45,7 +44,7 @@
                 </a>
             @endif
         @endauth
-    </nav>
+    </main>
 @endif
 @if (Route::has('login'))
     <div class="h-14.5 hidden lg:block"></div>
