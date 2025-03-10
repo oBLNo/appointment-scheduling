@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AppointmentController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,3 +20,8 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments'); // Zeigt den Kalender
+Route::post('/appointments/store', [AppointmentController::class, 'store']); // Speichert Termine
+Route::get('/appointments/data', [AppointmentController::class, 'fetch']); // Holt alle Termine für den Kalender
+
