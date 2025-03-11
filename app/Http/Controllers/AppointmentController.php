@@ -31,6 +31,6 @@ class AppointmentController extends Controller
             'end' => $request->end ?? $request->start, // Falls kein Enddatum angegeben wird
         ]);
 
-        return response()->json(['message' => 'Termin gespeichert']);
+        return response()->json(['message' => 'Appointment saved successfully.']);
     }
 }

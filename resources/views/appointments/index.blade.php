@@ -7,8 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
 
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
-
     <!-- Deine eigenen Styles für den Kalender -->
     <style>
         /* Hintergrundfarbe des Kalenders */
@@ -41,6 +39,7 @@
         }
 
     </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
@@ -50,7 +49,7 @@
                 events: '/appointments/data', // Holt Termine aus der API
                 selectable: true,
                 select: function(info) {
-                    let title = prompt('Termin-Titel eingeben:');
+                    let title = prompt('Enter Name:');
                     if (title) {
                         fetch('/appointments/store', {
                             method: 'POST',
@@ -66,4 +65,5 @@
             calendar.render();
         });
     </script>
+
 </x-app-layout>

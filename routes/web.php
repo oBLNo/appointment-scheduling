@@ -21,7 +21,7 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments'); // Zeigt den Kalender
+Route::get('/appointments', [AppointmentController::class, 'index'])->middleware('auth')->name('appointments'); // Zeigt den Kalender
 Route::post('/appointments/store', [AppointmentController::class, 'store']); // Speichert Termine
 Route::get('/appointments/data', [AppointmentController::class, 'fetch']); // Holt alle Termine für den Kalender
 
