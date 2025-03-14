@@ -53,10 +53,26 @@
                     if (title) {
                         fetch('/appointments/store', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                            body: JSON.stringify({ title: title, start: info.startStr, end: info.endStr })
-                        }).then(() => {
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                title: title,
+                                start: info.startStr,
+                                end: info.endStr
+                            })
+                        }).then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => { throw new Error(text); });
+                            }
+                            return response.json();
+                        }).then(data => {
+                            alert('Appointment saved successfully.');
                             calendar.refetchEvents(); // Kalender neu laden
+                        }).catch(error => {
+                            console.error('There was a problem with the fetch operation:', error);
+                            alert('Failed to save appointment: ' + (error.message || 'Unknown error'));
                         });
                     }
                 }

@@ -25,3 +25,4 @@ Route::get('/appointments', [AppointmentController::class, 'index'])->middleware
 Route::post('/appointments/store', [AppointmentController::class, 'store']); // Speichert Termine
 Route::get('/appointments/data', [AppointmentController::class, 'fetch']); // Holt alle Termine für den Kalender
 
+Route::get('/appointments/today', [AppointmentController::class, 'getTodayAppointments'])->name('appointments.today'); // Holt alle Termine für heute

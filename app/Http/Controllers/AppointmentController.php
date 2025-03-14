@@ -16,6 +16,14 @@ class AppointmentController extends Controller
     {
         return response()->json(Appointment::all());
     }
+    public function getTodayAppointments()
+    {
+        $today = now()->toDateString(); // Heutiges Datum im Format "YYYY-MM-DD"
+
+        $appointments = Appointment::whereDate('start', $today)->get();
+
+        return response()->json($appointments);
+    }
 
     public function store(Request $request)
     {
@@ -25,12 +33,16 @@ class AppointmentController extends Controller
             'end' => 'nullable|date',
         ]);
 
-        Appointment::create([
-            'title' => $request->title,
-            'start' => $request->start,
-            'end' => $request->end ?? $request->start, // Falls kein Enddatum angegeben wird
-        ]);
+        try {
+            Appointment::create([
+                'title' => $request->title,
+                'start' => $request->start,
+                'end' => $request->end ?? $request->start, // Falls kein Enddatum angegeben wird
+            ]);
 
-        return response()->json(['message' => 'Appointment saved successfully.']);
+            return response()->json(['message' => 'Appointment saved successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to save appointment.', 'error' => $e->getMessage()], 500);
+        }
     }
 }
