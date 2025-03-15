@@ -2,12 +2,7 @@
     <div class="container">
         <div id="calendar"></div>
     </div>
-
-    <!-- FullCalendar über CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
-
-    <!-- Deine eigenen Styles für den Kalender -->
+{{--    Design--}}
     <style>
         /* Hintergrundfarbe des Kalenders */
         #calendar {
