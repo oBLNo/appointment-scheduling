@@ -1,38 +1,17 @@
 <x-app-layout>
+
     <div class="container">
         <div id="calendar"></div>
     </div>
+
 {{--    Design--}}
     <style>
-        /* Hintergrundfarbe des Kalenders */
         #calendar {
-            width: 80%; /* Verringert die Breite des Kalenders */
-            max-width: 1000px; /* Maximalbreite */
-            margin: 0 auto; /* Zentriert den Kalender */
-            height: 600px; /* Reduziert die Höhe des Kalenders */
-            background-color: #f0f0f0;
-            position: relative;
-            top: 100px;
+            max-width: 1100px;
+            margin: 40px auto;
+            font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+            font-size: 14px;
         }
-
-        /* Hintergrundfarbe der Header */
-        .fc-header-toolbar {
-            background-color: #333;
-            color: white;
-        }
-
-        /* Hintergrundfarbe für die einzelnen Tage */
-        .fc-daygrid-day {
-            background-color: white;
-        }
-        .fc-day-today {
-            background: linear-gradient(to bottom, cornflowerblue, rgba(100, 149, 237, 0.3)) !important;
-        }
-
-        .fc-today-button, .fc-prev-button, .fc-next-button {
-            background-color:cornflowerblue !important;
-        }
-
     </style>
 
     <script>
