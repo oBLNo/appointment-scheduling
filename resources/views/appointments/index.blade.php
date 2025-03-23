@@ -1,10 +1,12 @@
-<x-app-layout>
+@extends('layouts.app')
 
+@section('content')
     <div class="container">
         <div id="calendar"></div>
     </div>
+@endsection
 
-{{--    Design--}}
+@push('styles')
     <style>
         #calendar {
             max-width: 1100px;
@@ -13,21 +15,23 @@
             font-size: 14px;
         }
     </style>
+@endpush
 
+@push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
-                events: '/appointments/data', // Holt Termine aus der API
+                events: '/appointments/data',
                 selectable: true,
-                select: function(info) {
+                select: function (info) {
                     let title = prompt('Enter Name:');
                     if (title) {
                         let time = prompt('Enter Time (HH:MM):');
                         if (time) {
-                            let startDateTime = info.startStr.split('T')[0] + 'T' + time + ':00'; // Kombiniert Datum mit eingegebener Uhrzeit
+                            let startDateTime = info.startStr.split('T')[0] + 'T' + time + ':00';
                             fetch('/appointments/store', {
                                 method: 'POST',
                                 headers: {
@@ -37,16 +41,18 @@
                                 body: JSON.stringify({
                                     title: title,
                                     start: startDateTime,
-                                    end: startDateTime // Optional: Endzeit kann angepasst werden
+                                    end: startDateTime
                                 })
                             }).then(response => {
                                 if (!response.ok) {
-                                    return response.text().then(text => { throw new Error(text); });
+                                    return response.text().then(text => {
+                                        throw new Error(text);
+                                    });
                                 }
                                 return response.json();
                             }).then(data => {
                                 alert('Appointment saved successfully.');
-                                calendar.refetchEvents(); // Kalender neu laden
+                                calendar.refetchEvents();
                             }).catch(error => {
                                 console.error('There was a problem with the fetch operation:', error);
                                 alert('Failed to save appointment: ' + (error.message || 'Unknown error'));
@@ -55,9 +61,7 @@
                     }
                 }
             });
-
             calendar.render();
         });
     </script>
-
-</x-app-layout>
+@endpush

@@ -18,7 +18,7 @@ class AppointmentController extends Controller
     }
     public function getTodayAppointments()
     {
-        $today = now()->toDateString(); // Heutiges Datum im Format "YYYY-MM-DD"
+        $today = now()->toDateString(); // Today's date in format "YYYY-MM-DD"
 
         $appointments = Appointment::whereDate('start', $today)->get();
 
@@ -45,4 +45,20 @@ class AppointmentController extends Controller
             return response()->json(['message' => 'Failed to save appointment.', 'error' => $e->getMessage()], 500);
         }
     }
+
+    public function delete($id)
+    {
+        $appointment = Appointment::find($id);
+        if (!$appointment) {
+            return response()->json(['message' => 'Appointment not found.'], 404);
+        }
+        try {
+            $appointment->delete();
+            return response()->json(['message' => 'Appointment deleted successfully.']);
+        }catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to delete appointment.', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+
 }

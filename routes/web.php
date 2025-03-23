@@ -23,6 +23,7 @@ require __DIR__.'/auth.php';
 
 Route::get('/appointments', [AppointmentController::class, 'index'])->middleware('auth')->name('appointments'); // Zeigt den Kalender
 Route::post('/appointments/store', [AppointmentController::class, 'store']); // Speichert Termine
+Route::delete('/appointments/delete/{id}', [AppointmentController::class, 'delete']); // Löscht Termine
 Route::get('/appointments/data', [AppointmentController::class, 'fetch']); // Holt alle Termine für den Kalender
 
 Route::get('/appointments/today', [AppointmentController::class, 'getTodayAppointments'])->name('appointments.today'); // Holt alle Termine für heute

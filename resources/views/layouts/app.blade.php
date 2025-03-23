@@ -36,7 +36,9 @@
 
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+                @yield('content')
+                @stack('scripts')
+                @stack('styles')
             </main>
         </div>
     </body>
