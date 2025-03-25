@@ -12,7 +12,7 @@
             max-width: 1100px;
             margin: 40px auto;
             font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-            font-size: 14px;
+            font-size: 19px;
         }
     </style>
 @endpush
