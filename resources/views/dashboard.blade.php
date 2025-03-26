@@ -1,8 +1,12 @@
 @extends('layouts.app')
+@vite(['resources/js/app.js', 'resources/css/app.css'])
 
 @section('content')
-    <div class="contents">
-        <div id="calendar"></div>
+    <div id="app-container">
+        <div class="contents">
+            <div id="calendar"></div>
+        </div>
+        <appointment-scheduler ref="modal"></appointment-scheduler>
     </div>
 @endsection
 
@@ -58,45 +62,18 @@
                         });
                     }
                 },
-
                 select: function (info) {
-                    let title = prompt('Enter Name:');
-                    if (title) {
-                        let hour = prompt('Enter Time (Hour):');
-                        if (hour) {
-                            let minute = prompt('Enter Time (Minute) ')
-                            if (minute) {
-
-
-                                let startDateTime = info.startStr.split('T')[0] + 'T' + hour + minute; // Kombiniert Datum mit eingegebener Uhrzeit
-                                fetch('/appointments/store', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                    },
-                                    body: JSON.stringify({
-                                        title: title,
-                                        start: startDateTime,
-                                        end: startDateTime // Optional: Endzeit kann angepasst werden
-                                    })
-                                }).then(response => {
-                                    if (!response.ok) {
-                                        return response.text().then(text => {
-                                            throw new Error(text);
-                                        });
-                                    }
-                                    return response.json();
-                                }).then(data => {
-                                    calendar.refetchEvents(); // Kalender neu laden
-                                }).catch(error => {
-                                    console.error('There was a problem with the fetch operation:', error);
-                                    alert('Failed to save appointment: ' + (error.message || 'Unknown error'));
-                                });
-                            }
-                        }
+                    const app = document.getElementById('app-container').__vue_app__;
+                    if(app) {
+                        app.config.globalProperties.$refs.modal.openModal(info.startStr);
+                    } else {
+                        console.error('Vue-App not found!');
                     }
                 }
+
+
+
+
             });
             calendar.render();
         });
