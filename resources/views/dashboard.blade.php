@@ -62,18 +62,16 @@
                         });
                     }
                 },
+
                 select: function (info) {
-                    const app = document.getElementById('app-container').__vue_app__;
-                    if(app) {
-                        app.config.globalProperties.$refs.modal.openModal(info.startStr);
+                    const app = window.app?.$refs.modal;
+                    if (app) {
+                        console.log("Vue Modal gefunden:", app);
+                        app.openModal(info.startStr);
                     } else {
-                        console.error('Vue-App not found!');
+                        console.error('Modal-App not found!');
                     }
                 }
-
-
-
-
             });
             calendar.render();
         });
