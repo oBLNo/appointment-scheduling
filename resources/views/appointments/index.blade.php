@@ -23,6 +23,7 @@
             var calendarEl = document.getElementById('calendar');
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'de',
                 initialView: 'dayGridMonth',
                 events: '/appointments/data',
                 selectable: true,

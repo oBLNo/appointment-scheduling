@@ -1,13 +1,14 @@
 <template>
     <div v-if="isVisible" class="modal">
-        <div class="modal-content">
-            <h1>Termin erstellen</h1>
-            <p>Gewähltes Datum: {{ appointmentDate }}</p>
-            <input v-model="title" placeholder="Terminname eingeben">
-            <input v-model="hour" type="number" placeholder="Stunde (HH)">
-            <input v-model="minute" type="number" placeholder="Minute (MM)">
-            <button @click="saveAppointment">Speichern</button>
-            <button @click="closeModal">Schließen</button>
+        <div class="modal-content modal-font ">
+            <p style="text-align: center; padding: 10px;">Gewähltes Datum: {{ appointmentDate }}</p>
+            <input v-model="title" placeholder="Name eingeben"/>
+            <input v-model="hour" type="number" placeholder="Stunde (HH)"/>
+            <input v-model="minute" type="number" placeholder="Minute (MM)"/>
+            <div class="button-container">
+                <button @click="saveAppointment" class="styled-button">Speichern</button>
+                <button @click="closeModal" class="styled-button">Schließen</button>
+            </div>
         </div>
     </div>
 </template>
@@ -23,10 +24,17 @@ export default {
             minute: ''
         };
     },
+    mounted() {
+        console.log('Vue-Komponente geladen:', this.$el);
+    },
     methods: {
         openModal(date) {
-            this.appointmentDate = date;
+            const parsedDate = new Date(date);
+            const formattedDate = parsedDate.toLocaleDateString('de-DE');
+            this.appointmentDate = formattedDate;
+
             this.isVisible = true;
+            console.log('Modal sichtbar:', this.isVisible);
         },
         closeModal() {
             this.isVisible = false;
@@ -70,6 +78,42 @@ export default {
 </script>
 
 <style>
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; }
-.modal-content { background: white; padding: 20px; border-radius: 10px; }
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+.modal-font {
+  font-size: 15px;
+}
+
+.button-container {
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.styled-button {
+    border: 2px solid black; /* Sichtbarer Rand */
+    padding: 10px 30px; /* Innenabstand: Höhe (10px), Breite (30px) */
+    width: 150px; /* Fixe Breite für längere Buttons */
+    height: 40px; /* Höhe für schmalere Optik */
+    background-color: white; /* Falls du eine Hintergrundfarbe möchtest */
+    text-align: center; /* Text zentrieren */
+    cursor: pointer;
+}
+
 </style>
