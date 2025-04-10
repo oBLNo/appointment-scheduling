@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('assigned_to')->nullable();
             $table->dateTime('start');
             $table->dateTime('end');
             $table->timestamps();

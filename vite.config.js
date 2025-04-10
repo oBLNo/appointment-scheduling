@@ -6,11 +6,12 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
     plugins: [
         laravel(['resources/css/app.css', 'resources/js/app.js']),
-            vue()
+        vue()
     ],
     resolve: {
         alias: {
             'vue': 'vue/dist/vue.esm-bundler.js'
         }
-    }
+    },
+
 });

@@ -5,10 +5,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppointmentController;
 
 
+Route::get('/users', function () {
+    return \App\Models\User::all();
+})->name('users');
+
 Route::get('/', function () {
     return view('welcome');
 });
-
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -19,11 +22,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware('auth')->group(function () {
+    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments');
+    Route::post('/appointments/store', [AppointmentController::class, 'store']);
+    Route::delete('/appointments/delete/{id}', [AppointmentController::class, 'delete']);
+    Route::get('/appointments/today', [AppointmentController::class, 'getTodayAppointments'])->name('appointments.today');
+});
+
+
 require __DIR__.'/auth.php';
-
-Route::get('/appointments', [AppointmentController::class, 'index'])->middleware('auth')->name('appointments'); // Zeigt den Kalender
-Route::post('/appointments/store', [AppointmentController::class, 'store']); // Speichert Termine
-Route::delete('/appointments/delete/{id}', [AppointmentController::class, 'delete']); // Löscht Termine
-Route::get('/appointments/data', [AppointmentController::class, 'fetch']); // Holt alle Termine für den Kalender
-
-Route::get('/appointments/today', [AppointmentController::class, 'getTodayAppointments'])->name('appointments.today'); // Holt alle Termine für heute

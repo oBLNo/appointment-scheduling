@@ -10,9 +10,7 @@
 @endsection
 
 @push('styles')
-
     <style>
-
         #calendar {
             max-width: 1100px;
             margin: 40px auto;

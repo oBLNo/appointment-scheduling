@@ -31,18 +31,20 @@ class AppointmentController extends Controller
             'title' => 'required|string',
             'start' => 'required|date',
             'end' => 'nullable|date',
+            'assigned_user' => 'required|string',
         ]);
 
         try {
             Appointment::create([
                 'title' => $request->title,
                 'start' => $request->start,
-                'end' => $request->end ?? $request->start, // Falls kein Enddatum angegeben wird
+                'end' => $request->end ?? $request->start,
+                'assigned_to' => $request->assigned_to,
             ]);
 
             return response()->json(['message' => 'Appointment saved successfully.']);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to save appointment.', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Failed to save appointment.', 'error' => $e->getMessage()], 500, ['Content-Type' => 'application/json']);
         }
     }
 
