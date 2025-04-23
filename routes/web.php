@@ -23,6 +23,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/appointments/data', [AppointmentController::class, 'getAppointments']);
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments');
     Route::post('/appointments/store', [AppointmentController::class, 'store']);
     Route::delete('/appointments/delete/{id}', [AppointmentController::class, 'delete']);

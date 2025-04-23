@@ -3,7 +3,7 @@
         <div class="modal-content modal-font ">
             <select v-model="assignedUser">
                 <option value="" disabled>Bitte wählen</option>
-                <option v-for="user in users" :key="user.id" :value="user.name">
+                <option v-for="user in users" :key="user.id" :value="user.id">
                     {{ user.name }}
                 </option>
             </select>
@@ -23,7 +23,7 @@
 export default {
     data() {
         return {
-            isVisible: false,
+            isVisible: true,
             appointmentDate: '',
             title: '',
             hour: '',
@@ -33,7 +33,7 @@ export default {
         };
     },
     mounted() {
-        console.log('Vue-Komponente geladen:', this.$el);
+        console.log('Komponente geladen. isVisible:', this.isVisible);
         fetch('/users', {
             headers: {
                 'Accept': 'application/json',
@@ -57,19 +57,24 @@ export default {
             this.appointmentDate = date;
 
             this.$nextTick(() => {
-                this.$refs.nameInput.focus();3
+                this.$refs.nameInput.focus();
+                3
             })
         },
         closeModal() {
             this.isVisible = false;
         },
         saveAppointment() {
+            console.log('saveAppointment wurde aufgerufen');
+            console.log('assignedUser:', this.assignedUser);
+
             if (!this.title || !this.hour || !this.minute || !this.assignedUser) {
                 alert('Bitte alle Felder ausfüllen!');
                 return;
             }
 
-            let startDateTime = this.appointmentDate + 'T' + this.hour + ':' + this.minute;
+            let time = `${this.hour.padStart(2, '0')}:${this.minute.padStart(2, '0')}`;
+            let startDateTime = `${this.appointmentDate}T${time}:00`;
 
             fetch('/appointments/store', {
                 method: 'POST',
@@ -79,11 +84,10 @@ export default {
                     'Accept': 'application/json',
                 },
                 body: JSON.stringify({
-                    name: this.title,
                     title: this.title,
-                    start: startDateTime,
-                    end: startDateTime,
-                    assigned_user: this.assignedUser
+                    start: this.startDateTime,
+                    end: this.startDateTime,
+                    assigned_to: parseInt(this.assignedUser)
                 })
             })
                 .then(response => {
@@ -96,6 +100,8 @@ export default {
                 })
                 .then(data => {
                     this.isVisible = false;
+                    console.log('Benutzer-Daten:', data);
+                    this.users = Array.isArray(data) ? data : [];
                     window.location.reload(); // Kalender aktualisieren
                 })
                 .catch(error => {

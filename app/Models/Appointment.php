@@ -10,6 +10,7 @@ class Appointment extends Model
     use HasFactory;
 
     protected $fillable = [
+        'assigned_to',
         'title',
         'start',
         'end',

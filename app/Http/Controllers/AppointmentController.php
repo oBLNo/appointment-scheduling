@@ -16,6 +16,11 @@ class AppointmentController extends Controller
     {
         return response()->json(Appointment::all());
     }
+
+    public function getAppointments()
+    {
+        return response()->json(Appointment::select('id', 'title', 'start', 'end')->get());
+    }
     public function getTodayAppointments()
     {
         $today = now()->toDateString(); // Today's date in format "YYYY-MM-DD"
@@ -31,9 +36,8 @@ class AppointmentController extends Controller
             'title' => 'required|string',
             'start' => 'required|date',
             'end' => 'nullable|date',
-            'assigned_user' => 'required|string',
+            'assigned_to' => 'required|integer',
         ]);
-
         try {
             Appointment::create([
                 'title' => $request->title,
@@ -46,6 +50,7 @@ class AppointmentController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to save appointment.', 'error' => $e->getMessage()], 500, ['Content-Type' => 'application/json']);
         }
+
     }
 
     public function delete($id)
@@ -57,7 +62,7 @@ class AppointmentController extends Controller
         try {
             $appointment->delete();
             return response()->json(['message' => 'Appointment deleted successfully.']);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to delete appointment.', 'error' => $e->getMessage()], 500);
         }
     }

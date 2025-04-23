@@ -28,36 +28,41 @@
                 events: '/appointments/data',
                 selectable: true,
                 select: function (info) {
-                    let title = prompt('Enter Name:');
-                    if (title) {
-                        let time = prompt('Enter Time (HH:MM):');
-                        if (time) {
-                            let startDateTime = info.startStr.split('T')[0] + 'T' + time + ':00';
-                            fetch('/appointments/store', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                },
-                                body: JSON.stringify({
-                                    title: title,
-                                    start: startDateTime,
-                                    end: startDateTime
-                                })
-                            }).then(response => {
-                                if (!response.ok) {
-                                    return response.text().then(text => {
-                                        throw new Error(text);
-                                    });
-                                }
-                                return response.json();
-                            }).then(data => {
-                                alert('Appointment saved successfully.');
-                                calendar.refetchEvents();
-                            }).catch(error => {
-                                console.error('There was a problem with the fetch operation:', error);
-                                alert('Failed to save appointment: ' + (error.message || 'Unknown error'));
-                            });
+                    let assigned_to = prompt('Mitarbeiter eingeben:')
+                    if (assigned_to) {
+                        let title = prompt('Enter Name:');
+                        if (title) {
+                            let time = prompt('Enter Time (HH:MM):');
+                            if (time) {
+                                let startDateTime = info.startStr.split('T')[0] + 'T' + time + ':00';
+                                fetch('/appointments/store', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                    },
+                                    body: JSON.stringify({
+                                        assigned_to: assigned_to,
+                                        title: title,
+                                        start: startDateTime,
+                                        end: startDateTime
+                                    })
+                                }).then(response => {
+                                    if (!response.ok) {
+                                        return response.text().then(text => {
+                                            throw new Error(text);
+                                        });
+                                    }
+                                    return response.json();
+                                }).then(data => {
+                                    alert('Appointment saved successfully.');
+                                    calendar.refetchEvents();
+                                }).catch(error => {
+                                    console.error('There was a problem with the fetch operation:', error);
+                                    alert('Failed to save appointment: ' + (error.message || 'Unknown error'));
+                                });
+                            }
                         }
                     }
                 }
