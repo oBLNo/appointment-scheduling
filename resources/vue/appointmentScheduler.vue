@@ -51,14 +51,13 @@ export default {
             });
     },
     methods: {
-        openModal(date) {
-            console.log("openModal wurde aufgerufen!");
+        openModal(info) {
+
             this.isVisible = true;
-            this.appointmentDate = date;
+            this.appointmentDate = info.startStr.split('T')[0];
 
             this.$nextTick(() => {
                 this.$refs.nameInput.focus();
-                3
             })
         },
         closeModal() {
@@ -68,13 +67,17 @@ export default {
             console.log('saveAppointment wurde aufgerufen');
             console.log('assignedUser:', this.assignedUser);
 
-            if (!this.title || !this.hour || !this.minute || !this.assignedUser) {
+            if (!this.title || !this.hour || !this.minute || !this.assignedUser || !this.appointmentDate) {
                 alert('Bitte alle Felder ausfüllen!');
                 return;
             }
 
+            console.log('appointmentDate:', this.appointmentDate);
+
             let time = `${this.hour.padStart(2, '0')}:${this.minute.padStart(2, '0')}`;
             let startDateTime = `${this.appointmentDate}T${time}:00`;
+
+            console.log("startDateTime:", startDateTime);
 
             fetch('/appointments/store', {
                 method: 'POST',
@@ -85,8 +88,8 @@ export default {
                 },
                 body: JSON.stringify({
                     title: this.title,
-                    start: this.startDateTime,
-                    end: this.startDateTime,
+                    start: startDateTime,
+                    end: startDateTime,
                     assigned_to: parseInt(this.assignedUser)
                 })
             })
