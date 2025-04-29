@@ -23,7 +23,7 @@
 export default {
     data() {
         return {
-            isVisible: true,
+            isVisible: false,
             appointmentDate: '',
             title: '',
             hour: '',
@@ -54,7 +54,7 @@ export default {
         openModal(info) {
 
             this.isVisible = true;
-            this.appointmentDate = info.startStr.split('T')[0];
+            this.appointmentDate = info.startStr.split('T')[0]; // nur das Datum, z. B. "2025-05-01"
 
             this.$nextTick(() => {
                 this.$refs.nameInput.focus();
@@ -63,21 +63,28 @@ export default {
         closeModal() {
             this.isVisible = false;
         },
+
         saveAppointment() {
+            console.log('DEBUG: appointmentDate =', this.appointmentDate);
+            console.log('appointmentDate beim Speichern:', this.appointmentDate);
             console.log('saveAppointment wurde aufgerufen');
             console.log('assignedUser:', this.assignedUser);
 
-            if (!this.title || !this.hour || !this.minute || !this.assignedUser || !this.appointmentDate) {
+            if (!this.title || !this.hour || !this.minute || !this.assignedUser) {
                 alert('Bitte alle Felder ausfüllen!');
                 return;
             }
 
             console.log('appointmentDate:', this.appointmentDate);
 
-            let time = `${this.hour.padStart(2, '0')}:${this.minute.padStart(2, '0')}`;
-            let startDateTime = `${this.appointmentDate}T${time}:00`;
+            const date = this.appointmentDate && this.appointmentDate.trim() !== ''
+                ? this.appointmentDate
+                : new Date().toISOString().split('T')[0]; // Fallback nur wenn leer
+            const time = `${this.hour.padStart(2, '0')}:${this.minute.padStart(2, '0')}`;
+            const startDateTime = `${date}T${time}:00`;
 
-            console.log("startDateTime:", startDateTime);
+            console.log('Speichere Termin für Datum:', this.appointmentDate);
+            console.log("erzeugtes Datum:", startDateTime);
 
             fetch('/appointments/store', {
                 method: 'POST',
@@ -105,14 +112,13 @@ export default {
                     this.isVisible = false;
                     console.log('Benutzer-Daten:', data);
                     this.users = Array.isArray(data) ? data : [];
-                    window.location.reload(); // Kalender aktualisieren
+                    window.location.reload();
                 })
                 .catch(error => {
                     console.error('Fehler beim Speichern:', error);
                     alert('Speichern fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler'));
                 });
-        }
-    }
+        }    }
 }
 </script>
 
