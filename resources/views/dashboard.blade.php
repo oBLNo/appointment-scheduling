@@ -72,7 +72,7 @@
                                 // Stelle sicher, dass das Modal verfügbar ist
                                 const modalRef = app.$refs?.modal;
                                 if (modalRef) {
-                                    modalRef.openModal(info.startStr);
+                                    modalRef.openModal(info);
                                 } else {
                                     console.error('Modal-Komponente nicht gefunden!');
                                 }
