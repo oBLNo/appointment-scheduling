@@ -60,6 +60,11 @@ export default {
         },
         closeModal() {
             this.isVisible = false;
+            this.title = '';
+            this.hour = '';
+            this.minute = '';
+            this.assignedUser = '';
+
         },
         saveAppointment() {
             if (!this.title || !this.hour || !this.minute || !this.assignedUser) {
