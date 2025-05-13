@@ -7,7 +7,7 @@
                     {{ user.name }}
                 </option>
             </select>
-            <p style="text-align: center; padding: 10px;">Gewähltes Datum: {{ appointmentDate }}</p>
+            <p style="text-align: center; padding: 10px;">Gewähltes Datum: {{ todayDate }}</p>
             <input v-model="title" placeholder="Name eingeben" ref="nameInput"/>
             <input v-model="hour" type="text" placeholder="Stunde (HH)" maxlength="2"/>
             <input v-model="minute" type="text" placeholder="Minute (MM)" maxlength="2" @keyup.enter="saveAppointment"/>
@@ -25,6 +25,7 @@ export default {
         return {
             isVisible: false,
             appointmentDate: '',
+            todayDate: '',
             title: '',
             hour: '',
             minute: '',
@@ -50,6 +51,9 @@ export default {
     methods: {
         openModal(info) {
             this.isVisible = true;
+            const [year, month, day] = info.startStr.split('T')[0].split('-');
+            this.todayDate = `${day}.${month}.${year}`; // z. B. "01.05.2025"
+
             this.appointmentDate = info.startStr.split('T')[0]; // nur das Datum, z. B. "2025-05-01"
 
             const loggedInUserId = document.querySelector('meta[name="logged-in-user-id"]')?.getAttribute('content');
