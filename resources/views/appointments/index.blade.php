@@ -10,7 +10,7 @@
     <style>
         #calendar {
             max-width: 1100px;
-            margin: 40px auto;
+            margin: 50px auto;
             font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
             font-size: 19px;
         }
@@ -22,10 +22,23 @@
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
 
+            const loggedInUserName = document.querySelector('meta[name="logged-in-user-name"]')?.getAttribute('content');
+
+
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 locale: 'de',
                 initialView: 'dayGridMonth',
                 events: '/appointments/data',
+                eventDidMount: function (info) {
+                    const user = info.event.extendedProps.assigned_user;
+                    const title = info.event.title;
+                    if (user && user.name) {
+                        const titleEl = info.el.querySelector('.fc-event-title');
+                        if (titleEl) {
+                            titleEl.innerText += ` | ${title} | ${user.name}`;
+                        }
+                    }
+                },
                 selectable: true,
                 select: function (info) {
                     let assigned_to = prompt('Mitarbeiter eingeben:')
