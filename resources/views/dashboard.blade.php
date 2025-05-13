@@ -24,6 +24,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const app = window.app;
+            const loggedInUserId = document.querySelector('meta[name="logged-in-user-id"]')?.getAttribute('content');
             if (app) {
                 console.log('Vue App gefunden, jetzt FullCalendar initialisieren...');
                 app.$nextTick(function() {
@@ -36,7 +37,16 @@
                         var calendar = new FullCalendar.Calendar(calendarEl, {
                             locale: 'de',
                             events: '/appointments/data',
-                            initialView: 'dayGridDay',
+                            eventDidMount: function (info) {
+                                const user = info.event.extendedProps.assigned_user;
+                                if (user && user.name) {
+                                    const titleEl = info.el.querySelector('.fc-event-title');
+                                    if (titleEl) {
+                                        titleEl.innerText += ` | ${loggedInUserId}`;
+                                    }
+                                }
+                            },
+                            initialView: 'dayGridWeek',
                             headerToolbar: {
                                 left: 'prev,next',
                                 center: 'title',

@@ -19,7 +19,21 @@ class AppointmentController extends Controller
 
     public function getAppointments()
     {
-        return response()->json(Appointment::select('id', 'title', 'start', 'end')->get());
+        $appointments = Appointment::with('assignedUser:id,name')
+            ->select('id', 'title', 'start', 'end', 'assigned_to')
+            ->get()
+            ->map(function ($appointment) {
+                return [
+                    'id' => $appointment->id,
+                    'title' => $appointment->title,
+                    'start' => $appointment->start,
+                    'end' => $appointment->end,
+                    'assigned_to' => $appointment->assigned_to,
+                    'assigned_user' => $appointment->assignedUser ? ['name' => $appointment->assignedUser->name] : null,
+                ];
+            });
+
+        return response()->json($appointments);
     }
     public function getTodayAppointments()
     {
