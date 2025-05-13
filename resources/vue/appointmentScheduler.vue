@@ -2,7 +2,7 @@
     <div v-if="isVisible" class="modal" @keydown.esc="closeModal">
         <div class="modal-content modal-font ">
             <select v-model="assignedUser">
-                <option value="" disabled>wählen</option>
+                <option v-if="!assignedUser" value="" disabled>wählen</option>
                 <option v-for="user in users" :key="user.id" :value="user.id">
                     {{ user.name }}
                 </option>
@@ -51,6 +51,9 @@ export default {
         openModal(info) {
             this.isVisible = true;
             this.appointmentDate = info.startStr.split('T')[0]; // nur das Datum, z. B. "2025-05-01"
+
+            const loggedInUserId = document.querySelector('meta[name="logged-in-user-id"]')?.getAttribute('content');
+            this.assignedUser = loggedInUserId || '';
             this.$nextTick(() => {
                 this.$refs.nameInput.focus();
             })
