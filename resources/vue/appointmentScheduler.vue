@@ -1,8 +1,8 @@
 <template>
-    <div v-if="isVisible" class="modal">
+    <div v-if="isVisible" class="modal" @keydown.esc="closeModal">
         <div class="modal-content modal-font ">
             <select v-model="assignedUser">
-                <option value="" disabled>Bitte wählen</option>
+                <option value="" disabled>wählen</option>
                 <option v-for="user in users" :key="user.id" :value="user.id">
                     {{ user.name }}
                 </option>
