@@ -9,10 +9,31 @@
 @push('styles')
     <style>
         #calendar {
-            max-width: 1100px;
+            width: 100%;
+            max-width: 1000px;
             margin: 50px auto;
             font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-            font-size: 19px;
+            font-size: 1rem;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 768px) {
+            #calendar {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #calendar {
+                font-size: 0.8rem;
+            }
+        }
+
+        .fc-event-title {
+            display: block !important;
+            width: 100% !important;
+            margin-bottom: 4px;
         }
     </style>
 @endpush
@@ -21,10 +42,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
-
-            const loggedInUserName = document.querySelector('meta[name="logged-in-user-name"]')?.getAttribute('content');
-
-
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 locale: 'de',
                 initialView: 'dayGridMonth',

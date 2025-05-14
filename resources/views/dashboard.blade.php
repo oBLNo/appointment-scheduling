@@ -17,6 +17,18 @@
             font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
             font-size: 19px;
         }
+
+        @media (max-width: 768px) {
+            #calendar {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #calendar {
+                font-size: 0.8rem;
+            }
+        }
     </style>
 @endpush
 
@@ -24,9 +36,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const app = window.app;
+            const loggedInUserId = document.querySelector('meta[name="logged-in-user-id"]')?.getAttribute('content');
             if (app) {
                 console.log('Vue App gefunden, jetzt FullCalendar initialisieren...');
-                app.$nextTick(function() {
+                app.$nextTick(function () {
                     var calendarEl = document.getElementById('calendar');
                     if (!calendarEl) {
                         console.error('Kalender-Element nicht gefunden!');
@@ -35,7 +48,17 @@
                     try {
                         var calendar = new FullCalendar.Calendar(calendarEl, {
                             locale: 'de',
-                            events: '/appointments/data',
+                            events: function (fetchInfo, successCallback, failureCallback) {
+                                fetch('/appointments/data')
+                                    .then(response => response.json())
+                                    .then(events => {
+                                        const filtered = events.filter(event => event.assigned_to === loggedInUserId);
+                                        successCallback(filtered);
+                                    }).catch(error => {
+                                    console.error('Fehler beim Laden der Events:', error);
+                                    failureCallback(error);
+                                })
+                            },
                             initialView: 'dayGridWeek',
                             headerToolbar: {
                                 left: 'prev,next',
@@ -68,7 +91,7 @@
                                     });
                                 }
                             },
-                            select: function(info) {
+                            select: function (info) {
                                 // Stelle sicher, dass das Modal verfügbar ist
                                 const modalRef = app.$refs?.modal;
                                 if (modalRef) {
