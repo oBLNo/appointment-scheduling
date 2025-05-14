@@ -3,9 +3,9 @@
 @section('content')
     <div class="contents">
         <div id="calendar"></div>
-    </div>
-    <div id="modal-container">
-        <appointment-scheduler ref="modal"></appointment-scheduler>
+        <div id="modal-container">
+            <appointment-scheduler ref="modal"></appointment-scheduler>
+        </div>
     </div>
 @endsection
 
@@ -92,8 +92,8 @@
                                 }
                             },
                             select: function (info) {
-                                // Stelle sicher, dass das Modal verfügbar ist
-                                const modalRef = app.$refs?.modal;
+                                const app = window.app;
+                                const modalRef = app?.$refs?.modal;
                                 if (modalRef) {
                                     modalRef.openModal(info);
                                 } else {

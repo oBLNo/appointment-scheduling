@@ -3,6 +3,9 @@
 @section('content')
     <div class="container">
         <div id="calendar"></div>
+        <div id="modal-container">
+            <appointment-scheduler ref="modal"></appointment-scheduler>
+        </div>
     </div>
 @endsection
 
@@ -30,17 +33,13 @@
             }
         }
 
-        .fc-event-title {
-            display: block !important;
-            width: 100% !important;
-            margin-bottom: 4px;
-        }
     </style>
 @endpush
 
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const loggedInUserName = document.querySelector('meta[name="logged-in-user-name"]')?.getAttribute('content');
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 locale: 'de',
@@ -57,43 +56,33 @@
                     }
                 },
                 selectable: true,
-                select: function (info) {
-                    let assigned_to = prompt('Mitarbeiter eingeben:')
-                    if (assigned_to) {
-                        let title = prompt('Enter Name:');
-                        if (title) {
-                            let time = prompt('Enter Time (HH:MM):');
-                            if (time) {
-                                let startDateTime = info.startStr.split('T')[0] + 'T' + time + ':00';
-                                fetch('/appointments/store', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'Accept': 'application/json',
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                    },
-                                    body: JSON.stringify({
-                                        assigned_to: assigned_to,
-                                        title: title,
-                                        start: startDateTime,
-                                        end: startDateTime
-                                    })
-                                }).then(response => {
-                                    if (!response.ok) {
-                                        return response.text().then(text => {
-                                            throw new Error(text);
-                                        });
-                                    }
-                                    return response.json();
-                                }).then(data => {
-                                    alert('Appointment saved successfully.');
-                                    calendar.refetchEvents();
-                                }).catch(error => {
-                                    console.error('There was a problem with the fetch operation:', error);
-                                    alert('Failed to save appointment: ' + (error.message || 'Unknown error'));
-                                });
+                eventClick: function (info) {
+                    if (confirm("Do you really want to delete this appointment?")) {
+                        fetch('/appointments/delete/' + info.event.id, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             }
-                        }
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error('Löschen fehlgeschlagen');
+                            }
+                            return response.json();
+                        }).then(() => {
+                            info.event.remove();
+                        }).catch(error => {
+                            console.error('Fehler beim Löschen:', error);
+                        });
+                    }
+                },
+                select: function (info) {
+                    const app = window.app;
+                    const modalRef = app?.$refs?.modal;
+                    if (modalRef) {
+                        modalRef.openModal(info);
+                    } else {
+                        console.error('Modal-Komponente nicht gefunden!');
                     }
                 }
             });
