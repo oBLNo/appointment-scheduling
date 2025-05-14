@@ -37,28 +37,41 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const app = window.app;
-            const loggedInUserId = document.querySelector('meta[name="logged-in-user-id"]')?.getAttribute('content');
             if (app) {
                 console.log('Vue App gefunden, jetzt FullCalendar initialisieren...');
                 app.$nextTick(function () {
-                    var calendarEl = document.getElementById('calendar');
+                    const calendarEl = document.getElementById('calendar');
                     if (!calendarEl) {
                         console.error('Kalender-Element nicht gefunden!');
                         return;
                     }
                     try {
-                        var calendar = new FullCalendar.Calendar(calendarEl, {
+                        const calendar = new FullCalendar.Calendar(calendarEl, {
                             locale: 'de',
-                            events: function (fetchInfo, successCallback, failureCallback) {
+                            events: function (info, successCallback, failureCallback) {
                                 fetch('/appointments/data')
                                     .then(response => response.json())
                                     .then(events => {
-                                        const filtered = events.filter(event => event.assigned_to === loggedInUserId);
-                                        successCallback(filtered);
+                                        const sortEvents = events.sort((a, b) => {
+                                            const nameA = a.name?.toLowerCase() || '';
+                                            const nameB = b.name?.toLowerCase() || '';
+                                            return nameA.localeCompare(nameB);
+                                        });
+                                        successCallback(sortEvents);
                                     }).catch(error => {
-                                    console.error('Fehler beim Laden der Events:', error);
+                                    console.error('Fehler beim Laden der Termine:', error);
                                     failureCallback(error);
                                 })
+                            },
+                            eventDidMount: function (info) {
+                                const user = info.event.extendedProps.assigned_user;
+                                const title = info.event.title;
+                                if (user && user.name) {
+                                    const titleEl = info.el.querySelector('.fc-event-title');
+                                    if (titleEl) {
+                                        titleEl.innerText += ` | ${title} | ${user.name}`;
+                                    }
+                                }
                             },
                             initialView: 'dayGridWeek',
                             headerToolbar: {

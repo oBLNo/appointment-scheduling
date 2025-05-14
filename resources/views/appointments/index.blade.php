@@ -13,7 +13,7 @@
     <style>
         #calendar {
             width: 100%;
-            max-width: 1000px;
+            max-width: none;
             margin: 50px auto;
             font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
             font-size: 1rem;
