@@ -9,11 +9,10 @@
             </select>
             <p style="text-align: center; padding: 10px;">Gewähltes Datum: {{ todayDate }}</p>
             <input v-model="title" placeholder="Name eingeben" ref="nameInput"/>
-            <input v-model="hour" type="text" placeholder="Stunde (HH)" maxlength="2"/>
-            <input v-model="minute" type="text" placeholder="Minute (MM)" maxlength="2" @keyup.enter="saveAppointment"/>
+            <input v-model="time" type="time" @keyup.enter="saveAppointment" />
             <div class="button-container">
-                <button @click="saveAppointment" class="styled-button">Speichern</button>
-                <button @click="closeModal" class="styled-button">Schließen</button>
+                <button @click="saveAppointment" class="styled-button">Save</button>
+                <button @click="closeModal" class="styled-button">Close</button>
             </div>
         </div>
     </div>
@@ -27,8 +26,7 @@ export default {
             appointmentDate: '',
             todayDate: '',
             title: '',
-            hour: '',
-            minute: '',
+            time: '',
             assignedUser: '',
             users: []
         };
@@ -65,13 +63,12 @@ export default {
         closeModal() {
             this.isVisible = false;
             this.title = '';
-            this.hour = '';
-            this.minute = '';
+            this.time = '';
             this.assignedUser = '';
 
         },
         saveAppointment() {
-            if (!this.title || !this.hour || !this.minute || !this.assignedUser) {
+            if (!this.title || !this.time || !this.assignedUser) {
                 alert('Bitte alle Felder ausfüllen!');
                 return;
             }
@@ -79,7 +76,7 @@ export default {
             const date = this.appointmentDate && this.appointmentDate.trim() !== ''
                 ? this.appointmentDate
                 : new Date().toISOString().split('T')[0]; // Fallback nur wenn leer
-            const time = `${this.hour.padStart(2, '0')}:${this.minute.padStart(2, '0')}`;
+            const time = this.time;
             const startDateTime = `${date}T${time}:00`;
 
             fetch('/appointments/store', {
@@ -159,6 +156,10 @@ export default {
 
 input {
     border: 1px black solid !important;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
 }
 
 select {

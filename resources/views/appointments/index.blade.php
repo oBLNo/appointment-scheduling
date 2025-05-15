@@ -21,18 +21,6 @@
             box-sizing: border-box;
         }
 
-        @media (max-width: 768px) {
-            #calendar {
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            #calendar {
-                font-size: 0.8rem;
-            }
-        }
-
     </style>
 @endpush
 
