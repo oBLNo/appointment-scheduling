@@ -14,7 +14,7 @@
         #calendar {
             width: 100%;
             max-width: none;
-            margin: 50px auto;
+            margin: 40px auto;
             font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
             font-size: 1rem;
             padding: 0 15px;
@@ -71,6 +71,7 @@
                             return response.json();
                         }).then(() => {
                             info.event.remove();
+                            calendar.refetchEvents();
                         }).catch(error => {
                             console.error('Fehler beim Löschen:', error);
                         });

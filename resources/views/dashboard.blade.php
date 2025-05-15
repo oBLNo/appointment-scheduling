@@ -87,6 +87,7 @@
                                         return response.json();
                                     }).then(() => {
                                         info.event.remove();
+                                        calendar.refetchEvents();
                                     }).catch(error => {
                                         console.error('Fehler beim Löschen:', error);
                                     });

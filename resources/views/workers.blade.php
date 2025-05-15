@@ -48,21 +48,7 @@
                     try {
                         const calendar = new FullCalendar.Calendar(calendarEl, {
                             locale: 'de',
-                            events: function (info, successCallback, failureCallback) {
-                                fetch('/appointments/data')
-                                    .then(response => response.json())
-                                    .then(events => {
-                                        const sortEvents = events.sort((a, b) => {
-                                            const nameA = a.name?.toLowerCase() || '';
-                                            const nameB = b.name?.toLowerCase() || '';
-                                            return nameA.localeCompare(nameB);
-                                        });
-                                        successCallback(sortEvents);
-                                    }).catch(error => {
-                                    console.error('Fehler beim Laden der Termine:', error);
-                                    failureCallback(error);
-                                })
-                            },
+                            events:'/appointments/data',
                             eventDidMount: function (info) {
                                 const user = info.event.extendedProps.assigned_user;
                                 const title = info.event.title;
