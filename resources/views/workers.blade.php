@@ -69,8 +69,7 @@
                                 if (user && user.name) {
                                     const titleEl = info.el.querySelector('.fc-event-title');
                                     if (titleEl) {
-                                        titleEl.innerText += ` | ${title} | ${user.name}`;
-                                    }
+                                        titleEl.innerText = `| ${title} (${user.name})`;                                    }
                                 }
                             },
                             initialView: 'dayGridWeek',
@@ -100,6 +99,7 @@
                                         return response.json();
                                     }).then(() => {
                                         info.event.remove();
+                                        calendar.refetchEvents();
                                     }).catch(error => {
                                         console.error('Fehler beim Löschen:', error);
                                     });
