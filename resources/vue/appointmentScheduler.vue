@@ -7,9 +7,9 @@
                     {{ user.name }}
                 </option>
             </select>
-            <p style="text-align: center; padding: 10px;">Gewähltes Datum: {{ todayDate }}</p>
+            <p>Gewähltes Datum: {{ todayDate }}</p>
             <input v-model="title" placeholder="Name eingeben" ref="nameInput"/>
-            <input v-model="time" type="time" @keyup.enter="saveAppointment" />
+            <input v-model="time" type="time" value="12:12" @keyup.enter="saveAppointment" />
             <div class="button-container">
                 <button @click="saveAppointment" class="styled-button">Save</button>
                 <button @click="closeModal" class="styled-button">Close</button>
@@ -49,6 +49,7 @@ export default {
     methods: {
         openModal(info) {
             this.isVisible = true;
+            this.time = "12:00";
             const [year, month, day] = info.startStr.split('T')[0].split('-');
             this.todayDate = `${day}.${month}.${year}`; // z. B. "01.05.2025"
 
@@ -115,6 +116,7 @@ export default {
 </script>
 
 <style>
+
 .modal {
     position: fixed;
     top: 0;
@@ -128,9 +130,57 @@ export default {
     z-index: 9999;
 }
 
+p {
+    text-align: center;
+    padding: 10px;
+}
+
+    /* Kleine Bildschirme (Handys) */
+    @media (max-width: 480px) {
+        .modal {
+            align-items: flex-end;
+            padding-bottom: 20px;
+        }
+        .modal-content {
+            max-width: 100%;  /* Vollbildbreite */
+            max-height: 90vh;     /* max 90% der Höhe */
+            overflow-y: auto; /* Scrollen bei zu viel Inhalt */
+            padding: 15px;
+            font-size: 16px;  /* evtl. etwas kleinere Schrift */
+            border-radius: 0; /* evtl. ohne Rundungen */
+        }
+
+        p {
+            text-align: center;
+            padding: 10px;
+            font-size: 10px;
+        }
+
+        .styled-button {
+            width: 100%; /* Buttons werden breit, an Touch angepasst */
+            height: 40px;
+            font-size: 16px;
+        }
+
+        input, select {
+            font-size: 16px;
+            padding: 12px;
+        }
+
+        .button-container {
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .modal-font {
+            font-size: 19px;
+        }
+    }
+
 .modal-content {
     background: white;
-    padding: 20px;
+    padding: 10px;
     border-radius: 10px;
 }
 

@@ -60,7 +60,7 @@
                                     failureCallback(error);
                                 })
                             },
-                            initialView: 'dayGridWeek',
+                            initialView: window.innerWidth < 480 ? 'dayGridDay' : 'dayGridWeek',
                             headerToolbar: {
                                 left: 'prev,next',
                                 center: 'title',
@@ -79,7 +79,7 @@
                                         headers: {
                                             'Content-Type': 'application/json',
                                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                        }
+                                        },
                                     }).then(response => {
                                         if (!response.ok) {
                                             throw new Error('Löschen fehlgeschlagen');
