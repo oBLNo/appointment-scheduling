@@ -2,10 +2,10 @@
     <div v-if="isVisible" class="modal" @keydown.esc="closeModal">
         <div class="modal-content modal-font ">
             <select v-model="assignedUser">
-                <option v-if="!assignedUser" value="" disabled>wählen</option>
                 <option v-for="user in users" :key="user.id" :value="user.id">
                     {{ user.name }}
                 </option>
+                <option v-if="!assignedUser" value="" disabled>wählen</option>
             </select>
             <p>Gewähltes Datum: {{ todayDate }}</p>
             <input v-model="title" placeholder="Name eingeben" ref="nameInput"/>
@@ -41,10 +41,13 @@ export default {
             .then(response => response.json())
             .then(data => {
                 this.users = Array.isArray(data) ? data : [];
+                const loggedInUserId = document.querySelector('meta[name="logged-in-user-id"]')?.getAttribute('content');
+                this.assignedUser = loggedInUserId || '';
             })
             .catch(error => {
                 console.error('Fehler beim Laden der Benutzer:', error);
             });
+
     },
     methods: {
         openModal(info) {
@@ -54,9 +57,6 @@ export default {
             this.todayDate = `${day}.${month}.${year}`; // z. B. "01.05.2025"
 
             this.appointmentDate = info.startStr.split('T')[0]; // nur das Datum, z. B. "2025-05-01"
-
-            const loggedInUserId = document.querySelector('meta[name="logged-in-user-id"]')?.getAttribute('content');
-            this.assignedUser = loggedInUserId || '';
             this.$nextTick(() => {
                 this.$refs.nameInput.focus();
             })

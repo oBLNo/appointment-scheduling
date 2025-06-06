@@ -29,7 +29,7 @@
 
         @media (max-width: 480px) {
             #calendar {
-                font-size: 1.2rem;
+                font-size: 1.0rem;
             }
         }
     </style>
