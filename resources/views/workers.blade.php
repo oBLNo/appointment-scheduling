@@ -11,10 +11,9 @@
 
 @push('styles')
     <style>
-        /* Spalten in dayGridWeek größer machen */
-        .fc .fc-col-header-cell,
-        .fc .fc-daygrid-day {
-            min-width: 100px; /* oder 120px oder mehr je nach Bedarf */
+        .fc .fc-header-toolbar {
+            padding: 10px;
+            font-size: 1rem;
         }
 
         #calendar {
@@ -25,7 +24,6 @@
             font-size: 19px;
             overflow-x: auto;
         }
-
 
         @media (max-width: 480px) {
             #calendar {
@@ -77,20 +75,21 @@
                             },
                             eventDidMount: function (info) {
                                 const user = info.event.extendedProps.assigned_user;
-                                const title = info.event.title;
+                                const originalTitle = info.event.extendedProps.original_title;
+
                                 if (user && user.name) {
                                     const titleEl = info.el.querySelector('.fc-event-title');
                                     if (titleEl) {
-                                        titleEl.innerText += ` | ${title} | ${user.name}`;
+                                        titleEl.innerText = `${originalTitle} | ${user.name}`;
                                     }
                                 }
                             },
                             // initialView: 'dayGridWeek',
                             initialView: window.innerWidth < 1344 ? 'dayGridDay' : 'dayGridWeek',
                             headerToolbar: {
-                                left: 'prev,next',
-                                center: 'title',
-                                right: window.innerWidth < 480 ? '': 'today,dayGridWeek,dayGridDay'
+                                left: 'prev,next,today',
+                                center: window.innerWidth > 480 ? 'title' : '',
+                                right: window.innerWidth < 480 ? 'title': 'dayGridWeek,dayGridDay'
                             },
                             eventTimeFormat: {
                                 hour: '2-digit',

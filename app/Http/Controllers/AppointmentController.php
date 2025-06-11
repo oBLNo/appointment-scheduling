@@ -16,7 +16,6 @@ class AppointmentController extends Controller
     {
         return response()->json(Appointment::all());
     }
-
     public function getAppointments()
     {
         $appointments = Appointment::with('assignedUser:id,name')
@@ -26,6 +25,7 @@ class AppointmentController extends Controller
                 return [
                     'id' => $appointment->id,
                     'title' => $appointment->title,
+                    'original_title' => $appointment->original_title,
                     'start' => $appointment->start,
                     'end' => $appointment->end,
                     'assigned_to' => $appointment->assigned_to,
@@ -38,7 +38,6 @@ class AppointmentController extends Controller
     public function getTodayAppointments()
     {
         $today = now()->toDateString(); // Today's date in format "YYYY-MM-DD"
-
         $appointments = Appointment::whereDate('start', $today)->get();
 
         return response()->json($appointments);

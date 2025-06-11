@@ -65,8 +65,8 @@ export default {
             this.isVisible = false;
             this.title = '';
             this.time = '';
-            this.assignedUser = '';
-
+            const loggedInUser = document.querySelector('meta[name="logged-in-user-id"]')?.getAttribute('content');
+            this.assignedUser = loggedInUser || '';
         },
         saveAppointment() {
             if (!this.title || !this.time || !this.assignedUser) {
