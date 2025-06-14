@@ -34,7 +34,7 @@
 @endpush
 
 @push('scripts')
-    <script>eee
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             const app = window.app;
             const loggedInUserId = document.querySelector('meta[name="logged-in-user-id"]')?.getAttribute('content');
@@ -79,6 +79,7 @@
                                 const title = arg.event.title;
                                 const start = new Date(arg.event.start);
                                 const currentView = arg.view.type;
+                                const isNarrowDisplay = window.innerWidth < 1334;
                                 const time = start.toLocaleTimeString('de-DE', {
                                     hour: '2-digit',
                                     minute: '2-digit'
@@ -87,7 +88,7 @@
                                 customHtml.innerText = title;
 
                                 if (user && user.name) {
-                                    if(currentView === 'dayGridWeek' & window.innerWidth < 1334){
+                                    if(currentView === 'dayGridWeek' && isNarrowDisplay){
                                         customHtml.innerHTML = `${time}<br>${title} | ${user.name}`;
                                     }else {
                                         customHtml.innerHTML = `${time} | ${title} | ${user.name}`;
