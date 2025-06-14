@@ -11,22 +11,32 @@
 
 @push('styles')
     <style>
+        .fc .fc-header-toolbar {
+            padding: 10px;
+            font-size: 1rem;
+        }
+
         #calendar {
             width: 100%;
             max-width: none;
             margin: 40px auto;
             font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-            font-size: 1rem;
-            padding: 0 15px;
-            box-sizing: border-box;
+            font-size: 19px;
+            overflow-x: auto;
         }
 
+        @media (max-width: 480px) {
+            #calendar {
+                font-size: 1.0rem;
+            }
+        }
     </style>
 @endpush
 
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const app = window.app;
             const loggedInUserName = document.querySelector('meta[name="logged-in-user-name"]')?.getAttribute('content');
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
