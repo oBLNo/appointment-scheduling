@@ -141,6 +141,25 @@
                         });
                         console.log('Kalender wird angezeigt...');
                         calendar.render();
+
+                        window.addEventListener('resize', function () {
+                            if (!calendar) return;
+                            const newView = window.innerWidth < 1344 ? 'dayGridDay' : 'dayGridWeek';
+                            const currentView = calendar.view.type;
+
+                            if (newView !== currentView) {
+                                calendar.changeView(newView);
+                            }
+
+                            calendar.setOption('headerToolbar', {
+                                left: 'prev,next,today',
+                                center: window.innerWidth > 480 ? 'title' : '',
+                                right: window.innerWidth < 480 ? 'title' : 'dayGridWeek,dayGridDay'
+                            });
+
+                            calendar.render();
+                        });
+
                     } catch (error) {
                         console.error('Fehler beim Initialisieren des Kalenders:', error);
                     }
