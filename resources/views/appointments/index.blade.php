@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="contents">
         <div id="calendar"></div>
         <div id="modal-container">
             <appointment-scheduler ref="modal"></appointment-scheduler>
@@ -37,55 +37,142 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const app = window.app;
-            const loggedInUserName = document.querySelector('meta[name="logged-in-user-name"]')?.getAttribute('content');
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                locale: 'de',
-                initialView: 'dayGridMonth',
-                events: '/appointments/data',
-                eventDidMount: function (info) {
-                    const user = info.event.extendedProps.assigned_user;
-                    const title = info.event.title;
-                    if (user && user.name) {
-                        const titleEl = info.el.querySelector('.fc-event-title');
-                        if (titleEl) {
-                            titleEl.innerText += ` | ${title} | ${user.name}`;
-                        }
+            const loggedInUserId = document.querySelector('meta[name="logged-in-user-id"]')?.getAttribute('content');
+            if (app) {
+                console.log('Vue App gefunden, jetzt FullCalendar initialisieren...');
+                app.$nextTick(function () {
+                    const calendarEl = document.getElementById('calendar');
+                    if (!calendarEl) {
+                        console.error('Kalender-Element nicht gefunden!')
+                        return;
                     }
-                },
-                selectable: true,
-                eventClick: function (info) {
-                    if (confirm("Do you really want to delete this appointment?")) {
-                        fetch('/appointments/delete/' + info.event.id, {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    try {
+                        const calendar = new FullCalendar.Calendar(calendarEl, {
+                            locale: 'de',
+                            dateClick: function(info) {
+                                const app = window.app;
+                                const modalRef = app?.$refs?.modal;
+                                if (modalRef) {
+                                    modalRef.openModal({
+                                        start: info.dateStr,
+                                        end: info.dateStr,
+                                        allDay: info.allDay
+                                    });
+                                } else {
+                                    console.error('Modal-Komponente nicht gefunden!');
+                                }
+                            },
+                            events: function (fetchInfo, successCallback, failureCallback) {
+                                fetch('/appointments/data')
+                                    .then(response => response.json())
+                                    .then(events => {
+                                        const filtered = events.filter(event => event.assigned_to);
+                                        successCallback(filtered);
+                                    }).catch(error => {
+                                    console.error('Fehler beim Laden der Events:', error);
+                                    failureCallback(error);
+                                })
+                            },
+                            initialView: window.innerWidth < 1344 ? 'dayGridDay' : 'dayGridMonth',
+                            eventContent: function (arg) {
+                                const user = arg.event.extendedProps.assigned_user;
+                                const title = arg.event.title;
+                                const start = new Date(arg.event.start);
+                                const currentView = arg.view.type;
+                                const isNarrowDisplay = window.innerWidth < 1334;
+                                const time = start.toLocaleTimeString('de-DE', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })
+                                let customHtml = document.createElement('div');
+                                customHtml.innerText = title;
+
+
+                                //checkPoint => no display restriction
+
+
+                                if (user && user.name) {
+                                    if(isNarrowDisplay && currentView === 'dayGridMonth'){
+                                        customHtml.innerHTML = `${time}<br>${title} | ${user.name} <br> ____________ `;
+                                    }else {
+                                        customHtml.innerHTML = `${time} | ${title} | ${user.name}`;
+                                    }
+                                }
+                                return { domNodes: [customHtml] };
+                            },
+                            // initialView: 'dayGridWeek',
+                            headerToolbar: {
+                                left: 'prev,next,today',
+                                center: window.innerWidth > 480 ? 'title' : '',
+                                right: window.innerWidth < 480 ? 'title': 'dayGridMonth,dayGridDay'
+                            },
+                            eventTimeFormat: {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                meridim: false
+                            },
+                            selectable: true,
+                            eventClick: function (info) {
+                                if (confirm("Do you really want to delete this appointment?")) {
+                                    fetch('/appointments/delete/' + info.event.id, {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                        },
+                                    }).then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Löschen fehlgeschlagen');
+                                        }
+                                        return response.json();
+                                    }).then(() => {
+                                        info.event.remove();
+                                        calendar.refetchEvents();
+                                    }).catch(error => {
+                                        console.error('Fehler beim Löschen:', error);
+                                    });
+                                }
+                            },
+                            select: function (info) {
+                                const app = window.app;
+                                const modalRef = app?.$refs?.modal;
+                                if (modalRef) {
+                                    modalRef.openModal(info);
+                                } else {
+                                    console.error('Modal-Komponente nicht gefunden!');
+                                }
                             }
-                        }).then(response => {
-                            if (!response.ok) {
-                                throw new Error('Löschen fehlgeschlagen');
-                            }
-                            return response.json();
-                        }).then(() => {
-                            info.event.remove();
-                            calendar.refetchEvents();
-                        }).catch(error => {
-                            console.error('Fehler beim Löschen:', error);
                         });
+                        console.log('Kalender wird angezeigt...');
+                        calendar.render();
+
+                        window.addEventListener('resize', function () {
+                            if (!calendar) return;
+                            const newView = window.innerWidth < 1344 ? 'dayGridDay' : 'dayGridMonth';
+                            const currentView = calendar.view.type;
+
+                            if (newView !== currentView) {
+                                calendar.changeView(newView);
+                            }
+
+                            calendar.setOption('headerToolbar', {
+                                left: 'prev,next,today',
+                                center: window.innerWidth > 480 ? 'title' : '',
+                                right: window.innerWidth < 480 ? 'title' : 'dayGridWeek,dayGridMonth'
+                            });
+
+                            calendar.render();
+                        });
+
+                    } catch (error) {
+                        console.error('Fehler beim Initialisieren des Kalenders:', error);
                     }
-                },
-                select: function (info) {
-                    const app = window.app;
-                    const modalRef = app?.$refs?.modal;
-                    if (modalRef) {
-                        modalRef.openModal(info);
-                    } else {
-                        console.error('Modal-Komponente nicht gefunden!');
-                    }
-                }
-            });
-            calendar.render();
+                });
+            } else {
+                console.error('Vue App nicht verfügbar!');
+            }
         });
     </script>
 @endpush
+
+
